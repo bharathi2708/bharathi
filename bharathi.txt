@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset (Modify the path accordingly)
+file_path = "your_dataset.csv"
+df = pd.read_csv(file_path)
+
+# Basic data exploration
+print(df.head())
+print(df.info())
+
+# Data preprocessing (Modify based on your dataset's columns)
+df.dropna(inplace=True)
+df = pd.get_dummies(df, drop_first=True)  # Convert categorical data
+
+# Define features and target variable
+X = df.drop(columns=["Accident_Occurrence"])  # Modify based on actual column names
+y = df["Accident_Occurrence"]
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train an AI model for traffic prediction
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Predictions and performance evaluation
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Model Accuracy: {accuracy:.2f}")
+
+# Feature importance visualization
+plt.figure(figsize=(10, 5))
+sns.barplot(x=X.columns, y=model.feature_importances_)
+plt.xticks(rotation=90)
+plt.title("Feature Importance in Traffic Safety Prediction")
+plt.show()
